@@ -1,0 +1,21 @@
+{
+    "name": "raphaelb/configapp",
+    "description": "Configuration application using symfony console.",
+    "require": {
+        "illuminate/config": "^5.2",
+        "symfony/console": "^3.0",
+        "illuminate/filesystem": "~5.2"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Raphaelbronsveld",
+            "email": "raphaelbronsveld@outlook.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Raphaelb\\": "src"
+        }
+    }
+}
