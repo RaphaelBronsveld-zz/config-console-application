@@ -3,7 +3,6 @@
 namespace Raphaelb\Console;
 
 use Illuminate\Config\Repository;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,7 +15,8 @@ class ConfigCommand extends Command {
 
 
     /**
-     * configure method
+     * configure method.
+     * Arguments / options added here.
      */
     protected function configure()
     {
@@ -76,6 +76,15 @@ class ConfigCommand extends Command {
 
     }
 
+    /**
+     * set new Configvalue by given key and value.
+     * And save the file.
+     *
+     * @param $key
+     * @param $value
+     *
+     * @return int
+     */
     protected function setConfigValue($key, $value){
 
         $items = require __DIR__.'/../../config/app.php';
