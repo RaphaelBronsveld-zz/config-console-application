@@ -4,15 +4,23 @@ namespace Raphaelb\Console;
 
 use Illuminate\Config\Repository;
 use Illuminate\Support\Collection;
+
+use Raphaelb\Foundation\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Illuminate\Filesystem\Filesystem;
 
 class ConfigCommand extends Command {
 
+    protected $app;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->app = new Application();
+    }
 
     /**
      * configure method.
@@ -96,7 +104,7 @@ class ConfigCommand extends Command {
         $array = new Collection($repo->items);
         $newArray = $array->items;
 
-        $file = new Filesystem();
+        $file = $this->app->make('filesystem');
         return $file->put($path, '<?php return ' . var_export($newArray, true) . ' ?>');
     }
 

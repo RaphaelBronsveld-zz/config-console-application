@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5c2257856e8bd25e06ee1a3dc4a75e9d",
-    "content-hash": "9d9a04a35503c5514d9b7082567b8189",
+    "hash": "897660e6b4d7658ec79270d5a56f039e",
+    "content-hash": "d80139be5a8be047fa690c47394836b9",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -118,6 +118,49 @@
             "description": "The Illuminate Config package.",
             "homepage": "http://laravel.com",
             "time": "2015-06-22 20:36:58"
+        },
+        {
+            "name": "illuminate/container",
+            "version": "v5.2.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/illuminate/container.git",
+                "reference": "afd2e874e034707c6bb9436f5a897ce29dce501a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/illuminate/container/zipball/afd2e874e034707c6bb9436f5a897ce29dce501a",
+                "reference": "afd2e874e034707c6bb9436f5a897ce29dce501a",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "5.2.*",
+                "php": ">=5.5.9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Illuminate\\Container\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylorotwell@gmail.com"
+                }
+            ],
+            "description": "The Illuminate Container package.",
+            "homepage": "http://laravel.com",
+            "time": "2016-01-06 14:42:17"
         },
         {
             "name": "illuminate/contracts",

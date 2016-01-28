@@ -3,13 +3,13 @@
 
     require __DIR__.'/../vendor/autoload.php';
 
-    use Raphaelb\Console\ConfigCommand;
-    use Symfony\Component\Console\Application;
+    use Raphaelb\Foundation\Application;
+
+
 
 $app = new Application();
-$app->add(new ConfigCommand());
-$app->run();
-
-
+$artisan = $app->make('artisan');
+$artisan->register('ConfigCommand');
+$artisan->run();
 
 ?>
