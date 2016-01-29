@@ -13,6 +13,7 @@ return [
         'Form' => 'Raphaelb\LaravelCollective\Form'
     ],
     'providers' => [
+        Raphaelb\LaravelCollective\HtmlServiceProvider::class,
 
     ]
 

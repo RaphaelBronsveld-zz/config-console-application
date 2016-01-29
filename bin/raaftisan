@@ -7,8 +7,7 @@ use Raphaelb\Foundation\Application;
 
 $app = new Application();
 
-
-
+$app->register('testprovider');
 $artisan = $app->make('artisan');
 
 $artisan->add(New \Raphaelb\Commands\ConfigCommand());

@@ -23,6 +23,8 @@ class Application extends Container
             return new Repository($items);
         });
 
+        $this->registerProviders();
+
         $this->start();
     }
 
@@ -38,9 +40,13 @@ class Application extends Container
 
     /**
      * registerProviders method
+     *
+     * @internal param $providers
      */
     protected function registerProviders()
     {
+        $appconfig = require __DIR__ . '/../../config/app.php';
+        $this->providers = $appconfig['providers'];
     }
 
     /**
@@ -53,6 +59,11 @@ class Application extends Container
         $this->addBindings($bindings);
     }
 
+    /**
+     * addSingletons method
+     *
+     * @param $bindings
+     */
     protected function addSingletons($bindings)
     {
         foreach ( $bindings[ 'singletons' ] as $singleton => $class )
@@ -61,6 +72,11 @@ class Application extends Container
         }
     }
 
+    /**
+     * addBindings method
+     *
+     * @param $bindings
+     */
     protected function addBindings($bindings)
     {
         foreach($bindings['bindings'] as $provider => $class)

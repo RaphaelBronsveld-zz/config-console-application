@@ -14,6 +14,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ConfigCommand extends Command {
 
 
+    /**
+     * ConfigCommand constructor.
+     */
     public function __construct()
     {
         parent::__construct();
