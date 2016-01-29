@@ -1,11 +1,10 @@
 <?php
 
-namespace Raphaelb\Console;
+namespace Raphaelb\Commands;
 
 use Illuminate\Config\Repository;
 use Illuminate\Support\Collection;
 
-use Raphaelb\Foundation\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,12 +13,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigCommand extends Command {
 
-    protected $app;
 
     public function __construct()
     {
         parent::__construct();
-        $this->app = new Application();
     }
 
     /**
@@ -48,6 +45,8 @@ class ConfigCommand extends Command {
      *
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
+     * @return int|null|void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -78,7 +77,7 @@ class ConfigCommand extends Command {
      */
     protected function getConfigValue($key) {
 
-        $items = require __DIR__.'/../../config/app.php';
+        $items = require __DIR__.'/../../config/config.php';
         $repo = new Repository($items);
         return $repo->get($key);
 
@@ -95,8 +94,8 @@ class ConfigCommand extends Command {
      */
     protected function setConfigValue($key, $value){
 
-        $items = require __DIR__.'/../../config/app.php';
-        $path =  __DIR__.'/../../config/app.php';
+        $items = require __DIR__.'/../../config/config.php';
+        $path =  __DIR__.'/../../config/config.php';
 
         $repo = new Repository($items);
         $repo->set($key, $value);
@@ -104,7 +103,7 @@ class ConfigCommand extends Command {
         $array = new Collection($repo->items);
         $newArray = $array->items;
 
-        $file = $this->app->make('filesystem');
+        //$file = $this->app->make('filesystem');
         return $file->put($path, '<?php return ' . var_export($newArray, true) . ' ?>');
     }
 
