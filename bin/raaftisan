@@ -5,19 +5,12 @@ require __DIR__.'/../vendor/autoload.php';
 
 use Raphaelb\Foundation\Application;
 
-
 $app = new Application();
-$bindings = $app->make('config');
 
-foreach($bindings['singletons'] as $singleton => $class){
-    $app->singleton($singleton, $class);
-}
 
-foreach($bindings['providers'] as $provider => $class){
-    $app->bind($provider, $class);
-}
 
 $artisan = $app->make('artisan');
+
 $artisan->add(New \Raphaelb\Commands\ConfigCommand());
 $artisan->run();
 
