@@ -1,0 +1,30 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__.'/../vendor/autoload.php';
+
+use Illuminate\Config\Repository;
+use Illuminate\Filesystem\Filesystem;
+use Raphaelb\Foundation\Application;
+use Raphaelb\Foundation\Artisan;
+
+$app = new Application();
+
+$app->bind('artisan', function() {
+    return new Artisan;
+});
+
+$app->singleton('configuration', function() {
+    return new Repository;
+});
+
+$app->bind('filesystem', function() {
+    return new Filesystem;
+});
+
+
+$artisan = $app->make('artisan');
+$artisan->add(New \Raphaelb\Console\ConfigCommand());
+$artisan->run();
+
+?>

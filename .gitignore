@@ -44,3 +44,6 @@
 
 /.idea/*
 
+/vendor
+
+/composer.lock

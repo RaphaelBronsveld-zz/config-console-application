@@ -19,28 +19,14 @@ use Symfony\Component\Console\Application as SymfonyApplication;
 class Artisan extends SymfonyApplication
 {
 
-    protected $app;
 
     /**
      * Artisan constructor.
      */
     public function __construct()
     {
-
-
         parent::__construct();
 
-        $this->app->bind('artisan', function() {
-            return new Artisan;
-        });
-
-        $this->app->singleton('configuration', function() {
-            return new Repository;
-        });
-
-        $this->app->bind('filesystem', function() {
-            return new Filesystem;
-        });
     }
 
 }
