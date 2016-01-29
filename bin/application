@@ -5,11 +5,12 @@
 
     use Raphaelb\Foundation\Application;
 
-
-
 $app = new Application();
+
+
+
 $artisan = $app->make('artisan');
-$artisan->register('ConfigCommand');
+$artisan->add(New \Raphaelb\Console\ConfigCommand());
 $artisan->run();
 
 ?>
