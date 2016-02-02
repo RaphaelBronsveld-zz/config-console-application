@@ -5,7 +5,7 @@ require __DIR__.'/../vendor/autoload.php';
 
 use Raphaelb\Foundation\Application;
 
-$app = new Application();
+$app = new Application(realpath(__DIR__ . '/../'));
 
 $app->register('testprovider');
 $artisan = $app->make('artisan');

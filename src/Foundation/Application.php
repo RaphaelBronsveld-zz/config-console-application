@@ -4,6 +4,7 @@ namespace Raphaelb\Foundation;
 
 use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
+use Illuminate\Filesystem\Filesystem;
 
 class Application extends Container
 {
@@ -13,30 +14,28 @@ class Application extends Container
 
     protected $app;
 
+    protected $basePath;
+
     /**
      * Application constructor.
      */
-    public function __construct()
+    public function __construct($basePath)
     {
+        $this->basePath = $basePath;
+        $this->instance('fs', new Filesystem());
         $this->config = $this->initConfig();
 
         $this->start();
     }
 
-    /**
-     * getConfigFiles method
-     *
-     * @return array
-     */
-    protected function getConfigFiles(){
-        $dir = $this->getDir();
-        $files = [];
-        $scanned_directory = array_diff(scandir($dir), array('..', '.'));
-        foreach ($scanned_directory as $filename) {
-            $filename = preg_replace("/(.+)\.php$/", "$1", $filename);
-            $files[] = $filename;
-        }
-        return $files;
+    public function configPath()
+    {
+        return $this->basePath() . DIRECTORY_SEPARATOR . 'config';
+    }
+
+    public function basePath()
+    {
+        return $this->basePath;
     }
 
     /**
@@ -45,14 +44,17 @@ class Application extends Container
      * @return \Illuminate\Config\Repository
      */
     protected function initConfig(){
-        $dir = $this->getDir();
+        /** @var \Illuminate\Filesystem\Filesystem $fs */
+        $fs = $this->make('fs');
         $config = new Repository();
         $this->instance('config', $config);
-        $files = $this->getConfigFiles();
-        foreach($files as $file){
-            $config->set($file, require $dir . $file . ".php");
+        foreach($this->make('fs')->files($this->configPath()) as $file){
+            $key = str_replace($this->basePath(), '', $file);
+            $key = str_replace(['.php', '/', 'config'], '', $key);
+            $config->set($key, $fs->getRequire($file));
         }
         return $config;
+
     }
 
     /**
@@ -110,14 +112,5 @@ class Application extends Container
         {
             $this->bind($provider, $class);
         }
-    }
-
-    /**
-     * getDir method
-     *
-     * @return string
-     */
-    protected function getDir(){
-        return __DIR__ . '/../../config/';
     }
 }

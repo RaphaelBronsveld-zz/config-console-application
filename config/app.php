@@ -8,7 +8,7 @@ return [
     ],
 
     'bindings'  => [
-        'filesystem' => 'Illuminate\Filesystem\Filesystem',
+        'fs' => 'Illuminate\Filesystem\Filesystem',
         'Html' => 'Raphaelb\LaravelCollective\Html',
         'Form' => 'Raphaelb\LaravelCollective\Form'
     ],

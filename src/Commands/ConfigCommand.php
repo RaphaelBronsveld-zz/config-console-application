@@ -21,7 +21,7 @@ class ConfigCommand extends Command {
      */
     public function __construct()
     {
-        $items = require __DIR__.'/../../config/config.php';
+        $items = require __DIR__.'/../../config/test.php';
         $this->items = $items;
         parent::__construct();
     }
@@ -121,7 +121,7 @@ class ConfigCommand extends Command {
      */
     public function getPath()
     {
-        return  __DIR__.'/../../config/config.php';
+        return  __DIR__.'/../../config/test.php';
     }
 
 }
