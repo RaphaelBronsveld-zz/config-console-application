@@ -3,6 +3,7 @@
 namespace Raphaelb\Commands;
 
 use Illuminate\Config\Repository;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 
 use Symfony\Component\Console\Command\Command;
@@ -13,12 +14,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigCommand extends Command {
 
+    protected $items;
 
     /**
      * ConfigCommand constructor.
      */
     public function __construct()
     {
+        $items = require __DIR__.'/../../config/config.php';
+        $this->items = $items;
         parent::__construct();
     }
 
@@ -80,7 +84,7 @@ class ConfigCommand extends Command {
      */
     protected function getConfigValue($key) {
 
-        $items = require __DIR__.'/../../config/config.php';
+        $items = $this->items;
         $repo = new Repository($items);
         return $repo->get($key);
 
@@ -97,8 +101,8 @@ class ConfigCommand extends Command {
      */
     protected function setConfigValue($key, $value){
 
-        $items = require __DIR__.'/../../config/config.php';
-        $path =  __DIR__.'/../../config/config.php';
+        $items = $this->items;
+        $path = $this->getPath();
 
         $repo = new Repository($items);
         $repo->set($key, $value);
@@ -106,8 +110,18 @@ class ConfigCommand extends Command {
         $array = new Collection($repo->items);
         $newArray = $array->items;
 
-        //$file = $this->app->make('filesystem');
+        $file = new Filesystem();
         return $file->put($path, '<?php return ' . var_export($newArray, true) . ' ?>');
+    }
+
+    /**
+     * getPath method
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        return  __DIR__.'/../../config/config.php';
     }
 
 }
