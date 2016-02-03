@@ -7,12 +7,14 @@ Console Configuration Application
 
 #### Examples
 ```
-php application config 'key' --set 'value'
-// Sets new value for given key.
+php raaftisan config 'key' --get 'database'
+// Returns new value for given key.
 
-php application config 'key' --get
-// Returns value by given key.
+php raaftisan config database --set 'mysql'
+// Sets new value by given key.
 ```
+
+## This is still Work in Progress.
 
 ### Copyright/License
 Copyright 2016 [Raphael Bronsveld](https://github.com/RaphaelBronsveld) - [MIT Licensed](http://RaphaelBronsveld.mit-license.org) 
