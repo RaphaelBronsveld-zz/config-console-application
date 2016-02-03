@@ -3,14 +3,16 @@
 
 require __DIR__.'/../vendor/autoload.php';
 
+use Raphaelb\Commands\ConfigCommand;
 use Raphaelb\Foundation\Application;
 
 $app = new Application(realpath(__DIR__ . '/../'));
 
 $app->register('testprovider');
+
 $artisan = $app->make('artisan');
 
-$artisan->add(New \Raphaelb\Commands\ConfigCommand());
+$artisan->add(New ConfigCommand());
 $artisan->run();
 
 ?>

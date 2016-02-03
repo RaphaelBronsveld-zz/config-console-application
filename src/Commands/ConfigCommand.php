@@ -6,6 +6,8 @@ use Illuminate\Config\Repository;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 
+use Raphaelb\Foundation\Application;
+use Raphaelb\Foundation\Artisan;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,6 +25,7 @@ class ConfigCommand extends Command {
     {
         $items = require __DIR__.'/../../config/test.php';
         $this->items = $items;
+
         parent::__construct();
     }
 

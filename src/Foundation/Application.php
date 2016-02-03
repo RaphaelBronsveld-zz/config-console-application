@@ -8,16 +8,14 @@ use Illuminate\Filesystem\Filesystem;
 
 class Application extends Container
 {
-    protected $configProviders;
-
     protected $config;
-
-    protected $app;
 
     protected $basePath;
 
     /**
      * Application constructor.
+     *
+     * @param $basePath
      */
     public function __construct($basePath)
     {
@@ -28,11 +26,21 @@ class Application extends Container
         $this->start();
     }
 
+    /**
+     * configPath method
+     *
+     * @return string
+     */
     public function configPath()
     {
         return $this->basePath() . DIRECTORY_SEPARATOR . 'config';
     }
 
+    /**
+     * basePath method
+     *
+     * @return mixed
+     */
     public function basePath()
     {
         return $this->basePath;
@@ -49,12 +57,10 @@ class Application extends Container
         $config = new Repository();
         $this->instance('config', $config);
         foreach($this->make('fs')->files($this->configPath()) as $file){
-            $key = str_replace($this->basePath(), '', $file);
-            $key = str_replace(['.php', '/', 'config'], '', $key);
+            $key = $this->getFileNameWithoutExtension($file);
             $config->set($key, $fs->getRequire($file));
         }
         return $config;
-
     }
 
     /**
@@ -72,9 +78,9 @@ class Application extends Container
      *
      * @internal param $providers
      */
-    protected function registerProviders()
+    protected function registerConfigApp()
     {
-        $this->configProviders = $this->config['app.providers'];
+        $this->config = $this->config['app'];
     }
 
     /**
@@ -83,9 +89,11 @@ class Application extends Container
     public function start()
     {
         $bindings = $this->make('config');
+
         $this->addSingletons($bindings);
         $this->addBindings($bindings);
-        $this->registerProviders();
+
+        $this->registerConfigApp();
     }
 
     /**
@@ -112,5 +120,28 @@ class Application extends Container
         {
             $this->bind($provider, $class);
         }
+    }
+
+    /**
+     * getFileName method
+     *
+     * @param $file
+     *
+     * @return mixed
+     */
+    protected function getFileName($file){
+        return str_replace($this->basePath(), '', $file);
+    }
+
+    /**
+     * getFileNameWithoutExtension method
+     *
+     * @param $file
+     *
+     * @return mixed
+     */
+    protected function getFileNameWithoutExtension($file){
+        $file = str_replace($this->basePath(), '', $file);
+        return str_replace(['.php', DIRECTORY_SEPARATOR, 'config'], '', $file);
     }
 }
