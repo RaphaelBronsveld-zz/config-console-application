@@ -11,6 +11,8 @@ class Application extends Container
 {
     protected $config;
 
+    protected $app;
+
     protected $basePath;
 
     protected $providers=[];
@@ -23,7 +25,6 @@ class Application extends Container
     public function __construct($basePath)
     {
         $this->basePath = $basePath;
-
         $this->start();
     }
 
@@ -84,6 +85,11 @@ class Application extends Container
      * @param $provider
      */
     public function register($provider){
+        $class = new $provider($this->app);
+        $provider->register();
+        // kijken of provider deffered is.
+        // Zoja: niet uitvoeren registier functie
+        // Zo nee. Uitvoeren register functie
         $this->providers = $provider;
     }
 
