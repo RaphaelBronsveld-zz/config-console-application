@@ -1,5 +1,5 @@
 <?php return array (
-  'database' => 'New database',
+  'database' => 'test',
   'password' => 'secret',
   'naam' => 'raphael',
 ) ?>

@@ -8,7 +8,10 @@ use Raphaelb\Foundation\Application;
 
 $app = new Application(realpath(__DIR__ . '/../'));
 
-$app->register('testprovider');
+foreach($app->make('config')->get('app.providers') as $provider)
+{
+    $app->register($provider);
+}
 
 $artisan = $app->make('artisan');
 

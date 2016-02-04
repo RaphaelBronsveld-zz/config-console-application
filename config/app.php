@@ -3,8 +3,7 @@
 return [
 
     'singletons' => [
-        'artisan' => 'Raphaelb\Foundation\Artisan',
-        'config' => 'Illuminate\Config\Repository'
+        'artisan' => 'Raphaelb\Foundation\Artisan'
     ],
 
     'bindings'  => [
@@ -13,8 +12,8 @@ return [
         'Form' => 'Raphaelb\LaravelCollective\Form'
     ],
     'providers' => [
-        'Raphaelb\LaravelCollective\HtmlServiceProvider',
-
+        Raphaelb\LaravelCollective\HtmlServiceProvider::class,
+        'test'
     ]
 
 ];

@@ -6,7 +6,8 @@
         "symfony/console": "^3.0",
         "illuminate/filesystem": "~5.2",
         "illuminate/container": "~5.2",
-        "laravelcollective/html": "5.2.*"
+        "laravelcollective/html": "5.2.*",
+        "sebwite/support": "~1.0"
     },
     "license": "MIT",
     "authors": [

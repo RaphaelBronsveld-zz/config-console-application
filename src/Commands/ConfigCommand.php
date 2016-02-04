@@ -6,8 +6,6 @@ use Illuminate\Config\Repository;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 
-use Raphaelb\Foundation\Application;
-use Raphaelb\Foundation\Artisan;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -87,8 +85,7 @@ class ConfigCommand extends Command {
      */
     protected function getConfigValue($key) {
 
-        $items = $this->items;
-        $repo = new Repository($items);
+        $repo = new Repository($this->items);
         return $repo->get($key);
 
     }
@@ -104,10 +101,9 @@ class ConfigCommand extends Command {
      */
     protected function setConfigValue($key, $value){
 
-        $items = $this->items;
         $path = $this->getPath();
 
-        $repo = new Repository($items);
+        $repo = new Repository($this->items);
         $repo->set($key, $value);
 
         $array = new Collection($repo->items);
