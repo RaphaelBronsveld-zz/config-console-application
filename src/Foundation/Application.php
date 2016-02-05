@@ -2,6 +2,7 @@
 
 namespace Raphaelb\Foundation;
 
+use Collective\Html\HtmlServiceProvider;
 use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
 use Illuminate\Filesystem\Filesystem;
@@ -11,11 +12,11 @@ class Application extends Container
 {
     protected $config;
 
-    protected $app;
-
     protected $basePath;
 
     protected $providers=[];
+
+    protected $defferedProviders;
 
     /**
      * Application constructor.
@@ -24,8 +25,13 @@ class Application extends Container
      */
     public function __construct($basePath)
     {
+        $this->setApp();
         $this->basePath = $basePath;
         $this->start();
+    }
+
+    protected function setApp(){
+        $this->singleton('app', $this);
     }
 
     /**
@@ -82,14 +88,26 @@ class Application extends Container
     /**
      * register method
      *
-     * @param $provider
+     * @param ServiceProvider $provider
      */
     public function register($provider){
-        $class = new $provider($this->app);
-        $provider->register();
-        // kijken of provider deffered is.
-        // Zoja: niet uitvoeren registier functie
-        // Zo nee. Uitvoeren register functie
+        $provider = new $provider($this);
+
+        if($provider->isDeferred())
+        {
+            $provides = $provider->provides();
+
+            $this->defferedProviders = array_fill_keys($provides, $provider);
+
+            $this->resolving('html', function(){
+                $app = 'im actually resolving now';
+                dd($app);
+            });
+
+        } else {
+            $provider->register();
+        }
+
         $this->providers = $provider;
     }
 

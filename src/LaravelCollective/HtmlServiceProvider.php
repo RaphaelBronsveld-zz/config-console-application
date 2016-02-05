@@ -22,16 +22,29 @@ class HtmlServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerHtmlBuilder();
+        $this->registerFormBuilder();
     }
 
     protected function registerHtmlBuilder()
     {
-        $this->app->singleton('html', function ($app) {
-            return new Html($app['url'], $app['view']);
+        $this->app->singleton('html', function () {
+            return new Html();
         });
     }
 
+    protected function registerFormBuilder()
+    {
+        $this->app->singleton('form', function ($app) {
+            $form = new Form($app['html'], $app['url'], $app['view'], $app['session.store']->getToken());
 
+            return $form->setSessionStore($app['session.store']);
+        });
+    }
+
+    public function provides()
+    {
+        return ['html', 'form', 'Raphaelb\LaravelCollective\Html', 'Raphaelb\LaravelCollective\Form'];
+    }
 
 
 }

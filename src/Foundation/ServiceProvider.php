@@ -23,7 +23,7 @@ abstract class ServiceProvider
 {
     protected $app;
 
-    protected $defer = false;
+    protected $defer = true;
 
     /**
      * ServiceProvider constructor.

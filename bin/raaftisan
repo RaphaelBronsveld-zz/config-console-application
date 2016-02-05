@@ -13,6 +13,8 @@ foreach($app->make('config')->get('app.providers') as $provider)
     $app->register($provider);
 }
 
+$test = $app->make('html');
+
 $artisan = $app->make('artisan');
 
 $artisan->add(New ConfigCommand());

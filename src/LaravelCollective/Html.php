@@ -2,8 +2,12 @@
 
 namespace Raphaelb\LaravelCollective;
 
-use Collective\Html\HtmlBuilder;
 
-class Html extends HtmlBuilder {
+class Html {
+
+    public function hello(){
+        print 'hello';
+    }
+
 
 }
