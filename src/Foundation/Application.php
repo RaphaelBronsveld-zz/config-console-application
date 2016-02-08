@@ -6,6 +6,7 @@ use Collective\Html\HtmlServiceProvider;
 use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
 use Illuminate\Filesystem\Filesystem;
+use Raphaelb\LaravelCollective\Html;
 use Sebwite\Support\Path;
 
 class Application extends Container
@@ -14,9 +15,11 @@ class Application extends Container
 
     protected $basePath;
 
-    protected $providers=[];
+    protected $providers = [ ];
 
-    protected $defferedProviders;
+    protected $deferredProviders = [];
+
+    protected $deferredServices = [];
 
     /**
      * Application constructor.
@@ -30,7 +33,8 @@ class Application extends Container
         $this->start();
     }
 
-    protected function setApp(){
+    protected function setApp()
+    {
         $this->singleton('app', $this);
     }
 
@@ -59,13 +63,15 @@ class Application extends Container
      *
      * @return \Illuminate\Config\Repository
      */
-    protected function initConfig(){
+    protected function initConfig()
+    {
         /** @var \Illuminate\Filesystem\Filesystem $fs */
-        $fs = $this->make('fs');
+        $fs     = $this->make('fs');
         $config = new Repository();
         $this->instance('config', $config);
 
-        foreach($fs->files($this->configPath()) as $file){
+        foreach ( $fs->files($this->configPath()) as $file )
+        {
             $config->set(
                 Path::getFilenameWithoutExtension($file),
                 $fs->getRequire($file)
@@ -76,40 +82,74 @@ class Application extends Container
     }
 
     /**
-     * boot method
-     *
-     * @internal param $provider
-     */
-    protected function boot()
-    {
-
-    }
-
-    /**
      * register method
      *
      * @param ServiceProvider $provider
      */
-    public function register($provider){
+    public function register($provider)
+    {
+        /** @var \Raphaelb\Foundation\ServiceProvider $provider */
         $provider = new $provider($this);
 
-        if($provider->isDeferred())
+        if ( $provider->isDeferred() )
         {
             $provides = $provider->provides();
+            $this->deferredServices = array_merge($this->deferredServices, array_fill_keys($provides, $provider));
+            $this->deferredProviders[] = $provider;
+        }
+        else
+        {
+            $provider->register();
+            $this->providers[] = $provider;
+        }
+    }
 
-            $this->defferedProviders = array_fill_keys($provides, $provider);
+    public function isDeferredService($service)
+    {
+        if ( array_key_exists($service, $this->deferredServices) )
+        {
+            /** @var \Raphaelb\Foundation\ServiceProvider $provider */
+            $provider = $this->deferredServices[$service];
+            return $provider->isDeferred();
+        }
 
-            $this->resolving('html', function(){
-                $app = 'im actually resolving now';
-                dd($app);
-            });
+    }
 
-        } else {
+    public function loadDeferredService($service)
+    {
+        if(array_key_exists($service, $this->deferredServices))
+        {
+            $service = $this->deferredServices[$service];
+            /** @var \Raphaelb\Foundation\ServiceProvider $service */
+            $service->register();
+        }
+    }
+
+    /**
+     * Resolve the given type from the container.
+     *
+     * @param  string $abstract
+     * @param  array  $parameters
+     *
+     * @return mixed
+     */
+    public function make($abstract, array $parameters = [ ])
+    {
+        if ( array_key_exists($abstract, $this->deferredProviders) )
+        {
+            /** @var \Raphaelb\Foundation\ServiceProvider $provider */
+            $provider = $this->deferredProviders[ $abstract ];
             $provider->register();
         }
 
-        $this->providers = $provider;
+        if ( $this->isDeferredService($abstract))
+        {
+            $this->loadDeferredService($abstract);
+        }
+
+        return parent::make($abstract, $parameters);
     }
+
 
     /**
      * start method
@@ -120,7 +160,6 @@ class Application extends Container
         $this->config = $this->initConfig();
 
         $this->addSingletons($this->config);
-        $this->addBindings($this->config);
     }
 
     /**
@@ -130,22 +169,9 @@ class Application extends Container
      */
     protected function addSingletons($bindings)
     {
-        foreach ( $bindings['app.singletons'] as $singleton => $class )
+        foreach ( $bindings[ 'app.singletons' ] as $singleton => $class )
         {
             $this->singleton($singleton, $class);
-        }
-    }
-
-    /**
-     * addBindings method
-     *
-     * @param $bindings
-     */
-    protected function addBindings($bindings)
-    {
-        foreach($bindings['app.bindings'] as $provider => $class)
-        {
-            $this->bind($provider, $class);
         }
     }
 
@@ -156,7 +182,8 @@ class Application extends Container
      *
      * @return mixed
      */
-    protected function getFileName($file){
+    protected function getFileName($file)
+    {
         return str_replace($this->basePath(), '', $file);
     }
 
@@ -167,8 +194,10 @@ class Application extends Container
      *
      * @return mixed
      */
-    protected function getFileNameWithoutExtension($file){
+    protected function getFileNameWithoutExtension($file)
+    {
         $filename = $this->getFileName($file);
-        return str_replace(['.php', DIRECTORY_SEPARATOR, 'config'], '', $filename);
+
+        return str_replace([ '.php', DIRECTORY_SEPARATOR, 'config' ], '', $filename);
     }
 }
