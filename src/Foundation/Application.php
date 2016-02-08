@@ -15,10 +15,19 @@ class Application extends Container
 
     protected $basePath;
 
+    /**
+     * @var \Raphaelb\Foundation\ServiceProvider[]
+     */
     protected $providers = [ ];
 
+    /**
+     * @var \Raphaelb\Foundation\ServiceProvider[]
+     */
     protected $deferredProviders = [];
 
+    /**
+     * @var \Raphaelb\Foundation\ServiceProvider[]
+     */
     protected $deferredServices = [];
 
     /**
@@ -108,9 +117,7 @@ class Application extends Container
     {
         if ( array_key_exists($service, $this->deferredServices) )
         {
-            /** @var \Raphaelb\Foundation\ServiceProvider $provider */
-            $provider = $this->deferredServices[$service];
-            return $provider->isDeferred();
+            return true;
         }
 
     }
@@ -119,9 +126,8 @@ class Application extends Container
     {
         if(array_key_exists($service, $this->deferredServices))
         {
-            $service = $this->deferredServices[$service];
-            /** @var \Raphaelb\Foundation\ServiceProvider $service */
-            $service->register();
+            $provider = $this->deferredServices[$service];
+            $provider->register();
         }
     }
 
@@ -135,12 +141,6 @@ class Application extends Container
      */
     public function make($abstract, array $parameters = [ ])
     {
-        if ( array_key_exists($abstract, $this->deferredProviders) )
-        {
-            /** @var \Raphaelb\Foundation\ServiceProvider $provider */
-            $provider = $this->deferredProviders[ $abstract ];
-            $provider->register();
-        }
 
         if ( $this->isDeferredService($abstract))
         {
