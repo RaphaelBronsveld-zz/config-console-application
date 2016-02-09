@@ -43,6 +43,13 @@ abstract class ServiceProvider
     abstract public function register();
 
     /**
+     * provides method
+     *
+     * @return mixed
+     */
+    abstract public function provides();
+
+    /**
      * boot method
      */
     public function boot(){

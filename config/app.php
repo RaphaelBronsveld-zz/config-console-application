@@ -6,7 +6,8 @@ return [
     ],
 
     'providers' => [
-        Raphaelb\LaravelCollective\HtmlServiceProvider::class
+        Raphaelb\LaravelCollective\HtmlServiceProvider::class,
+        //Radic\BladeExtensions\BladeExtensionsServiceProvider::class,
     ]
 
 ];

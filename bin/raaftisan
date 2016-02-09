@@ -14,6 +14,7 @@ foreach($app->make('config')->get('app.providers') as $provider)
 }
 
 $test = $app->make('html');
+$tes2 = $app->make('html');
 
 $artisan = $app->make('artisan');
 

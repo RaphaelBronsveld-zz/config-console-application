@@ -37,14 +37,11 @@ class Application extends Container
      */
     public function __construct($basePath)
     {
-        $this->setApp();
-        $this->basePath = $basePath;
-        $this->start();
-    }
-
-    protected function setApp()
-    {
         $this->singleton('app', $this);
+
+        $this->basePath = $basePath;
+
+        $this->start();
     }
 
     /**
@@ -102,9 +99,8 @@ class Application extends Container
 
         if ( $provider->isDeferred() )
         {
-            $provides = $provider->provides();
+            $provides               = $provider->provides();
             $this->deferredServices = array_merge($this->deferredServices, array_fill_keys($provides, $provider));
-            $this->deferredProviders[] = $provider;
         }
         else
         {
@@ -115,20 +111,21 @@ class Application extends Container
 
     public function isDeferredService($service)
     {
-        if ( array_key_exists($service, $this->deferredServices) )
-        {
-            return true;
-        }
-
+        return array_key_exists($service, $this->deferredServices) ;
     }
 
     public function loadDeferredService($service)
     {
-        if(array_key_exists($service, $this->deferredServices))
-        {
-            $provider = $this->deferredServices[$service];
-            $provider->register();
-        }
+        $provider = $this->deferredServices[$service];
+
+        if(in_array($provider, $this->providers, true))
+            {
+
+            } else {
+                $this->deferredProviders[] = $provider;
+                $this->providers[] = $provider;
+                $provider->register();
+            }
     }
 
     /**
@@ -149,7 +146,6 @@ class Application extends Container
 
         return parent::make($abstract, $parameters);
     }
-
 
     /**
      * start method
