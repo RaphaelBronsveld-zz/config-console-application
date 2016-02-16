@@ -1,11 +1,12 @@
-<?php return array (
-  'singletons' => 
-  array (
-    'artisan' => 'Raphaelb\\Foundation\\Artisan',
-    0 => 'newsingleton',
-  ),
-  'providers' => 
-  array (
-    'html' => 'Raphaelb\\LaravelCollective\\HtmlServiceProvider',
-  ),
-);
+<?php
+
+return [
+    'singletons' => [
+        'artisan' => 'Raphaelb\Foundation\Artisan'
+    ],
+
+    'providers' => [
+        'html' => 'Raphaelb\LaravelCollective\HtmlServiceProvider'
+    ]
+
+];

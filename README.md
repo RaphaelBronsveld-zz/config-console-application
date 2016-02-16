@@ -12,6 +12,8 @@ php raaftisan config test.database --get
 
 php raaftisan config app.database --set 'mysql2'
 // Sets new value by given key at file app.php in config dir.
+
+php raaftisan config 'filename'.'key' --set 'value'
 ```
 
 ## This is still Work in Progress.

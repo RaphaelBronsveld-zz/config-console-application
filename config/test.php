@@ -2,4 +2,4 @@
   'database' => 'mysql',
   'password' => 'secret',
   'naam' => 'raphael',
-) ?>
+);

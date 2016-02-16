@@ -89,7 +89,7 @@ class ConfigCommand extends Command {
         if($key && $optionget){
             $value = $this->getConfigValue($key);
             $value = $this->validateValue($value);
-            $output->writeln('<comment>' . var_dump($value) . '</comment>');
+            $output->writeln('<comment>' . $value . '</comment>');
         }
 
         if($key && $optionset){
@@ -107,7 +107,8 @@ class ConfigCommand extends Command {
      */
     protected function validateValue($input){
         if(is_array($input)){
-            return array_values($input);
+            $input = array_values($input);
+            var_dump($input);
         }
         else {
             return $input;
@@ -138,12 +139,18 @@ class ConfigCommand extends Command {
     {
         $fs = new Filesystem();
         $filename = $fs->name($key);
+
         // Get the right config array.
         $array = $this->items[$filename];
 
-        //Make sure we use a valid key and add it.
+        //Make sure we use a valid key and add it to the array.
         $key = substr(strstr($key, '.'), strlen('.'));
-        $array[$key][] = $value;
+        if(is_array($array[$key]))
+        {
+            $array[$key][] = $value;
+        } else {
+            $array[$key] = $value;
+        }
 
         return $fs->put(Application::getConfigPath() . DIRECTORY_SEPARATOR
             . $filename . '.php',
