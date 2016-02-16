@@ -2,10 +2,11 @@
 
 namespace Raphaelb\Commands;
 
+use Sebwite\Support\Path;
 use Illuminate\Config\Repository;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
-
+use Raphaelb\Foundation\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,17 +15,39 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigCommand extends Command {
 
-    protected $items;
+    /** @var Repository $items */
+    protected $items = [];
 
     /**
      * ConfigCommand constructor.
      */
     public function __construct()
     {
-        $items = require __DIR__.'/../../config/test.php';
-        $this->items = $items;
-
         parent::__construct();
+
+        $this->loadConfiguration();
+    }
+
+
+    /**
+     * loadConfiguration method
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    protected function loadConfiguration()
+    {
+        /** @var \Illuminate\Filesystem\Filesystem $fs */
+        $fs     = new Filesystem();
+        $items = new Repository();
+
+        foreach ( $fs->files(Application::getConfigPath()) as $file )
+        {
+            $items->set(
+                Path::getFilenameWithoutExtension($file),
+                $fs->getRequire($file)
+            );
+        }
+        $this->items = $items;
     }
 
     /**
@@ -65,15 +88,30 @@ class ConfigCommand extends Command {
 
         if($key && $optionget){
             $value = $this->getConfigValue($key);
-            $output->writeln('<comment>' . $value . '</comment>');
+            $value = $this->validateValue($value);
+            $output->writeln('<comment>' . var_dump($value) . '</comment>');
         }
 
         if($key && $optionset){
             $this->setConfigValue($key, $optionset);
             $output->writeln('New value is set to: ' . $optionset);
         }
+    }
 
-
+    /**
+     * validateValue method
+     * Is the input value an array or just a string?
+     * @param $input
+     *
+     * @return mixed
+     */
+    protected function validateValue($input){
+        if(is_array($input)){
+            return array_values($input);
+        }
+        else {
+            return $input;
+        }
     }
 
     /**
@@ -84,10 +122,7 @@ class ConfigCommand extends Command {
      * @return mixed
      */
     protected function getConfigValue($key) {
-
-        $repo = new Repository($this->items);
-        return $repo->get($key);
-
+        return $this->items->get($key);
     }
 
     /**
@@ -99,28 +134,19 @@ class ConfigCommand extends Command {
      *
      * @return int
      */
-    protected function setConfigValue($key, $value){
-
-        $path = $this->getPath();
-
-        $repo = new Repository($this->items);
-        $repo->set($key, $value);
-
-        $array = new Collection($repo->items);
-        $newArray = $array->items;
-
-        $file = new Filesystem();
-        return $file->put($path, '<?php return ' . var_export($newArray, true) . ' ?>');
-    }
-
-    /**
-     * getPath method
-     *
-     * @return string
-     */
-    public function getPath()
+    protected function setConfigValue($key, $value)
     {
-        return  __DIR__.'/../../config/test.php';
-    }
+        $fs = new Filesystem();
+        $filename = $fs->name($key);
+        // Get the right config array.
+        $array = $this->items[$filename];
 
+        //Make sure we use a valid key and add it.
+        $key = substr(strstr($key, '.'), strlen('.'));
+        $array[$key][] = $value;
+
+        return $fs->put(Application::getConfigPath() . DIRECTORY_SEPARATOR
+            . $filename . '.php',
+            '<?php return ' . var_export($array, true). ';');
+    }
 }

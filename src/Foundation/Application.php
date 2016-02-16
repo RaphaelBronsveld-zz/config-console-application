@@ -11,7 +11,7 @@ class Application extends Container
 {
     protected $config;
 
-    protected $basePath;
+    protected static $basePath;
 
     /**
      * @var \Raphaelb\Foundation\ServiceProvider[]
@@ -37,7 +37,7 @@ class Application extends Container
     {
         $this->singleton('app', $this);
 
-        $this->basePath = $basePath;
+        self::$basePath = $basePath;
 
         $this->start();
     }
@@ -47,9 +47,9 @@ class Application extends Container
      *
      * @return string
      */
-    public function configPath()
+    public static function getConfigPath()
     {
-        return $this->basePath() . DIRECTORY_SEPARATOR . 'config';
+        return self::basePath() . DIRECTORY_SEPARATOR . 'config';
     }
 
     /**
@@ -59,7 +59,7 @@ class Application extends Container
      */
     public function basePath()
     {
-        return $this->basePath;
+        return self::$basePath;
     }
 
     /**
@@ -74,7 +74,7 @@ class Application extends Container
         $config = new Repository();
         $this->instance('config', $config);
 
-        foreach ( $fs->files($this->configPath()) as $file )
+        foreach ( $fs->files(self::getConfigPath()) as $file )
         {
             $config->set(
                 Path::getFilenameWithoutExtension($file),
@@ -99,6 +99,9 @@ class Application extends Container
         {
             $provides               = $provider->provides();
             $this->deferredServices = array_merge($this->deferredServices, array_fill_keys($provides, $provider));
+            $this->deferredProviders[] = $provider;
+            $this->providers[]         = $provider;
+            $provider->register();
         }
         else
         {
@@ -130,23 +133,20 @@ class Application extends Container
 
         if(in_array($provider, $this->providers, true))
             {
-                // Nothing happens.
+                // Provider already registered.
             }
         else
         {
-            $this->deferredProviders[] = $provider;
-            $this->providers[]         = $provider;
-            $provider->register();
+            dd('You did not properly register a deferred service provider');
         }
     }
 
     /**
-     * Resolve the given type from the container.
-     *
+     * Resolve the given type from the container
      * @param  string $abstract
      * @param  array  $parameters
-     *
      * @return mixed
+     * TODO: Is this useful?
      */
     public function make($abstract, array $parameters = [ ])
     {

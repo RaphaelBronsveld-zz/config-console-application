@@ -7,11 +7,11 @@ Console Configuration Application
 
 #### Examples
 ```
-php raaftisan config database --get 
-// Returns new value for given key.
+php raaftisan config test.database --get 
+// Returns value for given key at file test.php in config dir.
 
-php raaftisan config database --set 'mysql'
-// Sets new value by given key.
+php raaftisan config app.database --set 'mysql2'
+// Sets new value by given key at file app.php in config dir.
 ```
 
 ## This is still Work in Progress.
