@@ -2,11 +2,9 @@
 
 namespace Raphaelb\Foundation;
 
-use Collective\Html\HtmlServiceProvider;
 use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
 use Illuminate\Filesystem\Filesystem;
-use Raphaelb\LaravelCollective\Html;
 use Sebwite\Support\Path;
 
 class Application extends Container
@@ -109,23 +107,37 @@ class Application extends Container
         }
     }
 
+    /**
+     * isDeferredService method
+     *
+     * @param $service
+     *
+     * @return bool
+     */
     public function isDeferredService($service)
     {
         return array_key_exists($service, $this->deferredServices) ;
     }
 
+    /**
+     * loadDeferredService method
+     *
+     * @param $service
+     */
     public function loadDeferredService($service)
     {
         $provider = $this->deferredServices[$service];
 
         if(in_array($provider, $this->providers, true))
             {
-
-            } else {
-                $this->deferredProviders[] = $provider;
-                $this->providers[] = $provider;
-                $provider->register();
+                // Nothing happens.
             }
+        else
+        {
+            $this->deferredProviders[] = $provider;
+            $this->providers[]         = $provider;
+            $provider->register();
+        }
     }
 
     /**
