@@ -4,21 +4,35 @@
 require __DIR__.'/../vendor/autoload.php';
 
 use Raphaelb\Commands\ConfigCommand;
-use Raphaelb\Foundation\Application;
 
-$app = new Application(realpath(__DIR__ . '/../'));
+$c1 = new \Illuminate\Container\Container;
+$c1->singleton('path', function(){
+    return 'asdf';
+});
+$c2 = new \Illuminate\Container\Container;
+$c2->singleton('path2', function(){
+    return 'asdf';
+});
 
-foreach($app->make('config')->get('app.providers') as $provider)
-{
-    $app->register($provider);
-}
+#$app = new \Raphaelb\Foundation\Application(realpath(__DIR__ . '/../'));
 
-$test = $app->make('html');
-$tes2 = $app->make('html');
+#$test1 = $app->make(\Raphaelb\Test\TestClassInterface::class);
+#$test12 = $app->make(\Raphaelb\Test\TestClassInterface::class);
+#$test13 = $app->make(\Raphaelb\Test\TestClassInterface::class);
 
-$artisan = $app->make('artisan');
+#$test2 = $app->make(\Raphaelb\Test\TestClass::class, ['path' => 'raafie']);
+#$test22 = $app->make(\Raphaelb\Test\TestClass::class);
+#$test23 = $app->make(\Raphaelb\Test\TestClass::class);
+//
+//$kernel = $app->make('Raphaelb\Foundation\Kernel');
+//
+//$kernel->handle();
+//
+//$artisan = $app->make('artisan');
+//
+//$artisan->add(New ConfigCommand());
+//$artisan->run();
 
-$artisan->add(New ConfigCommand());
-$artisan->run();
 
+die('end');
 ?>

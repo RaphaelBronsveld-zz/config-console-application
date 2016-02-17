@@ -11,7 +11,7 @@ class Application extends Container
 {
     protected $config;
 
-    protected static $basePath;
+    protected $basePath;
 
     /**
      * @var \Raphaelb\Foundation\ServiceProvider[]
@@ -33,13 +33,34 @@ class Application extends Container
      *
      * @param $basePath
      */
-    public function __construct($basePath)
+    public function __construct($basePath = null)
     {
-        $this->singleton('app', $this);
+        $this->singleton('artisan', function(){
+            return new Artisan();
+        });
+        $this->instance('app', $this);
 
-        self::$basePath = $basePath;
+        if ($basePath) {
+            $this->setBasePath($basePath);
+        }
+    }
 
-        $this->start();
+    /**
+     * Set the base path for the application.
+     *
+     * @param  string  $basePath
+     * @return $this
+     */
+    public function setBasePath($basePath)
+    {
+        $this->basePath = rtrim($basePath, '\/');
+        return $this;
+    }
+
+    public function bootstrapWith(array $bootstrappers){
+        foreach($bootstrappers as $bootstrapper){
+            $this->make($bootstrapper)->bootstrap($this);
+        }
     }
 
     /**
@@ -47,9 +68,9 @@ class Application extends Container
      *
      * @return string
      */
-    public static function getConfigPath()
+    public function getConfigPath()
     {
-        return self::basePath() . DIRECTORY_SEPARATOR . 'config';
+        return $this->basePath() . DIRECTORY_SEPARATOR . 'config';
     }
 
     /**
@@ -59,7 +80,14 @@ class Application extends Container
      */
     public function basePath()
     {
-        return self::$basePath;
+        return $this->basePath;
+    }
+
+    public function registerProviders(){
+        foreach($this->make('config')->get('app.providers') as $provider)
+        {
+            $this->register($provider);
+        }
     }
 
     /**
@@ -67,14 +95,14 @@ class Application extends Container
      *
      * @return \Illuminate\Config\Repository
      */
-    protected function initConfig()
+    public function initConfig()
     {
         /** @var \Illuminate\Filesystem\Filesystem $fs */
-        $fs     = $this->make('fs');
+        $fs     = new Filesystem();
         $config = new Repository();
         $this->instance('config', $config);
 
-        foreach ( $fs->files(self::getConfigPath()) as $file )
+        foreach ( $fs->files($this->getConfigPath()) as $file )
         {
             $config->set(
                 Path::getFilenameWithoutExtension($file),
@@ -97,10 +125,10 @@ class Application extends Container
 
         if ( $provider->isDeferred() )
         {
-            $provides               = $provider->provides();
-            $this->deferredServices = array_merge($this->deferredServices, array_fill_keys($provides, $provider));
-            $this->deferredProviders[] = $provider;
-            $this->providers[]         = $provider;
+            $provides                   = $provider->provides();
+            $this->deferredServices     = array_merge($this->deferredServices, array_fill_keys($provides, $provider));
+            $this->deferredProviders[]  = $provider;
+            $this->providers[]          = $provider;
             $provider->register();
         }
         else
@@ -146,7 +174,6 @@ class Application extends Container
      * @param  string $abstract
      * @param  array  $parameters
      * @return mixed
-     * TODO: Is this useful?
      */
     public function make($abstract, array $parameters = [ ])
     {
@@ -158,31 +185,6 @@ class Application extends Container
 
         return parent::make($abstract, $parameters);
     }
-
-    /**
-     * start method
-     */
-    public function start()
-    {
-        $this->instance('fs', new Filesystem());
-        $this->config = $this->initConfig();
-
-        $this->addSingletons($this->config);
-    }
-
-    /**
-     * addSingletons method
-     *
-     * @param $bindings
-     */
-    protected function addSingletons($bindings)
-    {
-        foreach ( $bindings[ 'app.singletons' ] as $singleton => $class )
-        {
-            $this->singleton($singleton, $class);
-        }
-    }
-
     /**
      * getFileName method
      *

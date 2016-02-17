@@ -21,6 +21,7 @@ namespace Raphaelb\Foundation;
  */
 abstract class ServiceProvider
 {
+    /** @var Application */
     protected $app;
 
     protected $defer = true;

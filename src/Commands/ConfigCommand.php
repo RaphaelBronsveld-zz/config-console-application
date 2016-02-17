@@ -40,7 +40,7 @@ class ConfigCommand extends Command {
         $fs     = new Filesystem();
         $items = new Repository();
 
-        foreach ( $fs->files(Application::getConfigPath()) as $file )
+        foreach ( $fs->files("/home/raphael/projects/consoleapp/config") as $file )
         {
             $items->set(
                 Path::getFilenameWithoutExtension($file),
@@ -152,7 +152,7 @@ class ConfigCommand extends Command {
             $array[$key] = $value;
         }
 
-        return $fs->put(Application::getConfigPath() . DIRECTORY_SEPARATOR
+        return $fs->put("/home/raphael/projects/consoleapp/config" . DIRECTORY_SEPARATOR
             . $filename . '.php',
             '<?php return ' . var_export($array, true). ';');
     }
