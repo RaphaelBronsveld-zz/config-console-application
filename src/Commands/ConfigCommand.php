@@ -5,8 +5,6 @@ namespace Raphaelb\Commands;
 use Sebwite\Support\Path;
 use Illuminate\Config\Repository;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Collection;
-use Raphaelb\Foundation\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -57,18 +55,18 @@ class ConfigCommand extends Command {
     protected function configure()
     {
         $this->setName('config')
-             ->setDescription('Get or set Config value\'s by key.')
-             ->addArgument('configkey',
-                            InputArgument::REQUIRED,
-                            'Config key --get to get value. Or Config key --set to mess around with value\'s.'
-             )
-             ->addOption('get')
-             ->addOption(
-                 'set',
-                 'null',
-                 InputOption::VALUE_REQUIRED,
+            ->setDescription('Get or set Config value\'s by key.')
+            ->addArgument('configkey',
+                InputArgument::REQUIRED,
+                'Config key --get to get value. Or Config key --set to mess around with value\'s.'
+            )
+            ->addOption('get')
+            ->addOption(
+                'set',
+                'null',
+                InputOption::VALUE_REQUIRED,
                 'Which key to what value?'
-             );
+            );
     }
 
     /**
@@ -88,8 +86,8 @@ class ConfigCommand extends Command {
 
         if($key && $optionget){
             $value = $this->getConfigValue($key);
-            $value = $this->validateValue($value);
-            $output->writeln('<comment>' . $value . '</comment>');
+            $value = $this->printableArray($value);
+            $output->writeln('<info>' . $value . '</info>');
         }
 
         if($key && $optionset){
@@ -105,10 +103,9 @@ class ConfigCommand extends Command {
      *
      * @return mixed
      */
-    protected function validateValue($input){
+    protected function printableArray($input){
         if(is_array($input)){
-            $input = array_values($input);
-            var_dump($input);
+            print_r(array_values($input));
         }
         else {
             return $input;
@@ -123,11 +120,17 @@ class ConfigCommand extends Command {
      * @return mixed
      */
     protected function getConfigValue($key) {
-        return $this->items->get($key);
+        $results = $this->items->get($key);
+
+        if($results){
+            return $results;
+        } else {
+            return 'No results';
+        }
     }
 
     /**
-     * set new Configvalue by given key and value.
+     * set new Config value by given key and value.
      * And save the file.
      *
      * @param $key
@@ -152,7 +155,7 @@ class ConfigCommand extends Command {
             $array[$key] = $value;
         }
 
-        return $fs->put("/home/raphael/projects/consoleapp/config" . DIRECTORY_SEPARATOR
+        return $fs->put('/home/raphael/projects/consoleapp/config' . DIRECTORY_SEPARATOR
             . $filename . '.php',
             '<?php return ' . var_export($array, true). ';');
     }

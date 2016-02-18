@@ -2,14 +2,7 @@
 
 namespace Raphaelb\Foundation;
 
-use Illuminate\Contracts\Container\Container;
 use Raphaelb\Contracts\Application as ApplicationContract;
-
-/**
- * Part of the Sebwite PHP packages.
- *
- * License and copyright information bundled with this package in the LICENSE file
- */
 
 class Kernel {
 
@@ -23,8 +16,7 @@ class Kernel {
      */
     protected $bootstrappers = [
         'Raphaelb\Foundation\Bootstrap\LoadConfiguration',
-        'Raphaelb\Foundation\Bootstrap\RegisterProviders',
-        'Raphaelb\Foundation\Bootstrap\BindArtisan'
+        'Raphaelb\Foundation\Bootstrap\RegisterProviders'
     ];
 
     /**

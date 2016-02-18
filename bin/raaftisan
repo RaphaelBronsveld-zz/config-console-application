@@ -4,13 +4,21 @@
 require __DIR__.'/../vendor/autoload.php';
 
 use Raphaelb\Commands\ConfigCommand;
+use Raphaelb\Foundation\Application;
 
-$app = new \Raphaelb\Foundation\Application(realpath(__DIR__ . '/../'));
+$app = new Application(realpath(__DIR__ . '/../'));
 
+/**
+ * @var \Raphaelb\Foundation\Kernel $kernel
+ */
 $kernel = $app->make('Raphaelb\Foundation\Kernel');
 
 $kernel->handle();
 
+
+/**
+ * @var \Raphaelb\Foundation\Artisan $artisan
+ */
 $artisan = $app->make('artisan');
 
 $artisan->add(New ConfigCommand());

@@ -9,7 +9,7 @@ use Raphaelb\Foundation\ServiceProvider;
  * This is the class HtmlServiceProvider.
  *
  * @package        Raphaelb\LaravelCollective
- * @author         Sebwite
+ * @author         Raphael
  * @copyright      Copyright (c) 2015, Sebwite. All rights reserved
  *
  *                 extend de basis service provider.

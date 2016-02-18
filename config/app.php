@@ -1,6 +1,7 @@
 <?php return [
     'providers' =>
         [
-            'html' => 'Raphaelb\LaravelCollective\HtmlServiceProvider'
-        ]
+            Raphaelb\Foundation\Providers\ArtisanServiceProvider::class,
+            Raphaelb\LaravelCollective\HtmlServiceProvider::class,
+        ],
 ];
