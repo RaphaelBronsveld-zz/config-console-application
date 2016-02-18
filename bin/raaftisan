@@ -5,34 +5,13 @@ require __DIR__.'/../vendor/autoload.php';
 
 use Raphaelb\Commands\ConfigCommand;
 
-$c1 = new \Illuminate\Container\Container;
-$c1->singleton('path', function(){
-    return 'asdf';
-});
-$c2 = new \Illuminate\Container\Container;
-$c2->singleton('path2', function(){
-    return 'asdf';
-});
+$app = new \Raphaelb\Foundation\Application(realpath(__DIR__ . '/../'));
 
-#$app = new \Raphaelb\Foundation\Application(realpath(__DIR__ . '/../'));
+$kernel = $app->make('Raphaelb\Foundation\Kernel');
 
-#$test1 = $app->make(\Raphaelb\Test\TestClassInterface::class);
-#$test12 = $app->make(\Raphaelb\Test\TestClassInterface::class);
-#$test13 = $app->make(\Raphaelb\Test\TestClassInterface::class);
+$kernel->handle();
 
-#$test2 = $app->make(\Raphaelb\Test\TestClass::class, ['path' => 'raafie']);
-#$test22 = $app->make(\Raphaelb\Test\TestClass::class);
-#$test23 = $app->make(\Raphaelb\Test\TestClass::class);
-//
-//$kernel = $app->make('Raphaelb\Foundation\Kernel');
-//
-//$kernel->handle();
-//
-//$artisan = $app->make('artisan');
-//
-//$artisan->add(New ConfigCommand());
-//$artisan->run();
+$artisan = $app->make('artisan');
 
-
-die('end');
-?>
+$artisan->add(New ConfigCommand());
+$artisan->run();

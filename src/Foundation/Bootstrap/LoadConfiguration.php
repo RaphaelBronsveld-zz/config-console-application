@@ -2,7 +2,10 @@
 
 namespace Raphaelb\Foundation\Bootstrap;
 
+use Illuminate\Config\Repository;
 use Raphaelb\Foundation\Application;
+use Sebwite\Support\Filesystem;
+use Sebwite\Support\Path;
 
 /**
  * Part of the Sebwite PHP packages.
@@ -21,6 +24,19 @@ class LoadConfiguration implements BootstrapInterface {
      */
     public function bootstrap(Application $app)
     {
-        $app->initConfig();
+        $items = [];
+
+        /** @var \Illuminate\Filesystem\Filesystem $fs */
+        $fs     = new Filesystem();
+        $app->instance('config', $config = new Repository($items));
+
+        foreach ( $fs->files($app->getConfigPath()) as $file )
+        {
+            $config->set(
+                Path::getFilenameWithoutExtension($file),
+                $fs->getRequire($file)
+            );
+        }
+        return $config;
     }
 }

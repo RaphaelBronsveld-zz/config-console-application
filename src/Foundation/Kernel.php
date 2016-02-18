@@ -2,7 +2,8 @@
 
 namespace Raphaelb\Foundation;
 
-use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\Container;
+use Raphaelb\Contracts\Application as ApplicationContract;
 
 /**
  * Part of the Sebwite PHP packages.
@@ -22,15 +23,16 @@ class Kernel {
      */
     protected $bootstrappers = [
         'Raphaelb\Foundation\Bootstrap\LoadConfiguration',
-        'Raphaelb\Foundation\Bootstrap\RegisterProviders'
+        'Raphaelb\Foundation\Bootstrap\RegisterProviders',
+        'Raphaelb\Foundation\Bootstrap\BindArtisan'
     ];
 
     /**
      * Kernel constructor.
      *
-     * @param \Raphaelb\Foundation\Application $app
+     * @param \Raphaelb\Contracts\Application $app
      */
-    public function __construct(Container $app)
+    public function __construct(ApplicationContract $app)
     {
         $this->app = $app;
     }

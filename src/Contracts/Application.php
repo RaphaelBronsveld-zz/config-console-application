@@ -5,11 +5,9 @@
  * License and copyright information bundled with this package in the LICENSE file
  */
 
+namespace Raphaelb\Contracts;
 
-namespace Raphaelb\Test;
-
-
-interface TestClassInterface
+interface Application
 {
 
 }

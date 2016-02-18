@@ -1,8 +1,6 @@
-<?php
-
-return [
-    'providers' => [
-        'html' => 'Raphaelb\LaravelCollective\HtmlServiceProvider'
-    ]
-
+<?php return [
+    'providers' =>
+        [
+            'html' => 'Raphaelb\LaravelCollective\HtmlServiceProvider'
+        ]
 ];

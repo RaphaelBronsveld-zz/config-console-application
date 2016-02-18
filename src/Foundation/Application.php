@@ -2,12 +2,10 @@
 
 namespace Raphaelb\Foundation;
 
-use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
-use Illuminate\Filesystem\Filesystem;
-use Sebwite\Support\Path;
+use Raphaelb\Contracts\Application as ApplicationContract;
 
-class Application extends Container
+class Application extends Container implements ApplicationContract
 {
     protected $config;
 
@@ -21,12 +19,12 @@ class Application extends Container
     /**
      * @var \Raphaelb\Foundation\ServiceProvider[]
      */
-    protected $deferredProviders = [];
+    protected $deferredProviders = [ ];
 
     /**
      * @var \Raphaelb\Foundation\ServiceProvider[]
      */
-    protected $deferredServices = [];
+    protected $deferredServices = [ ];
 
     /**
      * Application constructor.
@@ -35,12 +33,12 @@ class Application extends Container
      */
     public function __construct($basePath = null)
     {
-        $this->singleton('artisan', function(){
-            return new Artisan();
-        });
         $this->instance('app', $this);
 
-        if ($basePath) {
+        $this->registerCoreContainerAliases();
+
+        if ( $basePath )
+        {
             $this->setBasePath($basePath);
         }
     }
@@ -48,17 +46,21 @@ class Application extends Container
     /**
      * Set the base path for the application.
      *
-     * @param  string  $basePath
+     * @param  string $basePath
+     *
      * @return $this
      */
     public function setBasePath($basePath)
     {
         $this->basePath = rtrim($basePath, '\/');
+
         return $this;
     }
 
-    public function bootstrapWith(array $bootstrappers){
-        foreach($bootstrappers as $bootstrapper){
+    public function bootstrapWith(array $bootstrappers)
+    {
+        foreach ( $bootstrappers as $bootstrapper )
+        {
             $this->make($bootstrapper)->bootstrap($this);
         }
     }
@@ -83,34 +85,12 @@ class Application extends Container
         return $this->basePath;
     }
 
-    public function registerProviders(){
-        foreach($this->make('config')->get('app.providers') as $provider)
+    public function registerProviders()
+    {
+        foreach ( $this->make('config')->get('app.providers') as $provider )
         {
             $this->register($provider);
         }
-    }
-
-    /**
-     * initConfig method
-     *
-     * @return \Illuminate\Config\Repository
-     */
-    public function initConfig()
-    {
-        /** @var \Illuminate\Filesystem\Filesystem $fs */
-        $fs     = new Filesystem();
-        $config = new Repository();
-        $this->instance('config', $config);
-
-        foreach ( $fs->files($this->getConfigPath()) as $file )
-        {
-            $config->set(
-                Path::getFilenameWithoutExtension($file),
-                $fs->getRequire($file)
-            );
-        }
-
-        return $config;
     }
 
     /**
@@ -125,10 +105,10 @@ class Application extends Container
 
         if ( $provider->isDeferred() )
         {
-            $provides                   = $provider->provides();
-            $this->deferredServices     = array_merge($this->deferredServices, array_fill_keys($provides, $provider));
-            $this->deferredProviders[]  = $provider;
-            $this->providers[]          = $provider;
+            $provides                  = $provider->provides();
+            $this->deferredServices    = array_merge($this->deferredServices, array_fill_keys($provides, $provider));
+            $this->deferredProviders[] = $provider;
+            $this->providers[]         = $provider;
             $provider->register();
         }
         else
@@ -147,7 +127,7 @@ class Application extends Container
      */
     public function isDeferredService($service)
     {
-        return array_key_exists($service, $this->deferredServices) ;
+        return array_key_exists($service, $this->deferredServices);
     }
 
     /**
@@ -157,57 +137,45 @@ class Application extends Container
      */
     public function loadDeferredService($service)
     {
-        $provider = $this->deferredServices[$service];
+        $provider = $this->deferredServices[ $service ];
 
-        if(in_array($provider, $this->providers, true))
-            {
-                // Provider already registered.
-            }
-        else
+        if ( in_array($provider, $this->providers, true) )
         {
-            dd('You did not properly register a deferred service provider');
+            // Provider already registered.
         }
     }
 
     /**
      * Resolve the given type from the container
+     *
      * @param  string $abstract
      * @param  array  $parameters
+     *
      * @return mixed
      */
     public function make($abstract, array $parameters = [ ])
     {
 
-        if ( $this->isDeferredService($abstract))
+        if ( $this->isDeferredService($abstract) )
         {
             $this->loadDeferredService($abstract);
         }
 
         return parent::make($abstract, $parameters);
     }
-    /**
-     * getFileName method
-     *
-     * @param $file
-     *
-     * @return mixed
-     */
-    protected function getFileName($file)
-    {
-        return str_replace($this->basePath(), '', $file);
-    }
 
-    /**
-     * getFileNameWithoutExtension method
-     *
-     * @param $file
-     *
-     * @return mixed
-     */
-    protected function getFileNameWithoutExtension($file)
+    public function registerCoreContainerAliases()
     {
-        $filename = $this->getFileName($file);
+        $aliases = [
+            'app' => [ 'Raphaelb\Foundation\Application', 'Raphaelb\Contracts\Application' ]
+        ];
 
-        return str_replace([ '.php', DIRECTORY_SEPARATOR, 'config' ], '', $filename);
+        foreach ( $aliases as $key => $aliases )
+        {
+            foreach ( $aliases as $alias )
+            {
+                $this->alias($key, $alias);
+            }
+        }
     }
 }
