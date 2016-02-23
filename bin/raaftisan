@@ -15,7 +15,6 @@ $kernel = $app->make('Raphaelb\Foundation\Kernel');
 
 $kernel->handle();
 
-
 /**
  * @var \Raphaelb\Foundation\Artisan $artisan
  */

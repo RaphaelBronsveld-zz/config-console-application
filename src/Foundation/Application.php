@@ -108,14 +108,10 @@ class Application extends Container implements ApplicationContract
             $provides                  = $provider->provides();
             $this->deferredServices    = array_merge($this->deferredServices, array_fill_keys($provides, $provider));
             $this->deferredProviders[] = $provider;
-            $this->providers[]         = $provider;
-            $provider->register();
         }
-        else
-        {
-            $provider->register();
-            $this->providers[] = $provider;
-        }
+
+        $provider->register();
+        $this->providers[] = $provider;
     }
 
     /**
