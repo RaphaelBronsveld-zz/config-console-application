@@ -53,3 +53,9 @@ $artisan = $app->make('artisan');
 $artisan->add(New ConfigCommand());
 $artisan->run();
 ```
+
+**60** PHAR aanmaken
+- Download [Box2](https://github.com/box-project/box2)
+- Lees handleiding
+- Bekijk voorbeelden
+- Maak een executable PHAR van je applicatie 
