@@ -15,8 +15,10 @@ php raaftisan config app.database --set 'mysql2'
 
 php raaftisan config 'filename'.'key' --set 'value'
 ```
+### Demo
+File 'raaftisan' at root folder has the whole project archived into .phar file. Play around with it using php raaftisan.
 
-## This is still Work in Progress.
+File 'raaftisan' at bin folder is where the magic happens.
 
 ### Copyright/License
 Copyright 2016 [Raphael Bronsveld](https://github.com/RaphaelBronsveld) - [MIT Licensed](http://RaphaelBronsveld.mit-license.org) 
