@@ -30,13 +30,14 @@ class LoadConfiguration implements BootstrapInterface {
         $fs     = new Filesystem();
         $app->instance('config', $config = new Repository($items));
 
-        foreach ( $fs->files($app->getConfigPath()) as $file )
+        foreach (scandir($app->getConfigPath()) as $file )
         {
             $config->set(
                 Path::getFilenameWithoutExtension($file),
-                $fs->getRequire($file)
+                $fs->getRequire($app->getConfigPath() . '/' .$file)
             );
         }
+
         return $config;
     }
 }

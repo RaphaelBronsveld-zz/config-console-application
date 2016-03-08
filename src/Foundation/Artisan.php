@@ -9,7 +9,5 @@ use Symfony\Component\Console\Application as SymfonyApplication;
  */
 class Artisan extends SymfonyApplication
 {
-    /**
-     * TODO: Work in Progress
-     */
+
 }

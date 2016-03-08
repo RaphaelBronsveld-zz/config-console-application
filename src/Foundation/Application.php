@@ -52,9 +52,7 @@ class Application extends Container implements ApplicationContract
      */
     public function setBasePath($basePath)
     {
-        $this->basePath = rtrim($basePath, '\/');
-
-        return $this;
+        $this->basePath = $basePath;
     }
 
     public function bootstrapWith(array $bootstrappers)
@@ -72,7 +70,7 @@ class Application extends Container implements ApplicationContract
      */
     public function getConfigPath()
     {
-        return $this->basePath() . DIRECTORY_SEPARATOR . 'config';
+        return $this->basePath() . DIRECTORY_SEPARATOR . "config";
     }
 
     /**

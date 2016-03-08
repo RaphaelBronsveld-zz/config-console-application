@@ -6,7 +6,7 @@ require __DIR__.'/../vendor/autoload.php';
 use Raphaelb\Commands\ConfigCommand;
 use Raphaelb\Foundation\Application;
 
-$app = new Application(realpath(__DIR__ . '/../'));
+$app = new Application(dirname(__DIR__));
 
 /**
  * @var \Raphaelb\Foundation\Kernel $kernel

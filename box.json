@@ -1,0 +1,7 @@
+{
+    "chmod": "0755",
+    "directories": ["config", "vendor", "src"],
+    "main": "bin/raaftisan",
+    "output": "raaftisan.phar",
+    "stub": true
+}
