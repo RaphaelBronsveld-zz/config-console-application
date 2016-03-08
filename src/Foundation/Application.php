@@ -22,11 +22,6 @@ class Application extends Container implements ApplicationContract
     protected $deferredProviders = [ ];
 
     /**
-     * @var \Raphaelb\Foundation\ServiceProvider[]
-     */
-    protected $deferredServices = [ ];
-
-    /**
      * Application constructor.
      *
      * @param $basePath
@@ -42,6 +37,11 @@ class Application extends Container implements ApplicationContract
             $this->setBasePath($basePath);
         }
     }
+
+    /**
+     * @var \Raphaelb\Foundation\ServiceProvider[]
+     */
+    protected $deferredServices = [ ];
 
     /**
      * Set the base path for the application.
@@ -85,6 +85,9 @@ class Application extends Container implements ApplicationContract
         return $this->basePath;
     }
 
+    /**
+     * registerProviders method
+     */
     public function registerProviders()
     {
         foreach ( $this->make('config')->get('app.providers') as $provider )
