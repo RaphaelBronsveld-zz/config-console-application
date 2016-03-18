@@ -1,5 +1,5 @@
 <?php return array (
-  'database' => 'mysql',
+  'database' => 'mysql2',
   'password' => 'secret',
   'naam' => 'raphael',
 );

@@ -2,10 +2,10 @@
 
 namespace Raphaelb\Commands;
 
+use Illuminate\Console\Command;
 use Sebwite\Support\Path;
 use Illuminate\Config\Repository;
 use Illuminate\Filesystem\Filesystem;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -16,6 +16,9 @@ class ConfigCommand extends Command {
     /** @var Repository $items */
     protected $items = [];
 
+    protected $dir = __DIR__;
+
+    protected $description = 'Get or set config value \'s by given key';
     /**
      * ConfigCommand constructor.
      */
@@ -26,6 +29,9 @@ class ConfigCommand extends Command {
         $this->loadConfiguration();
     }
 
+    public function getConfigDir(){
+        return $this->dir . '/../../config';
+    }
 
     /**
      * loadConfiguration method
@@ -38,7 +44,7 @@ class ConfigCommand extends Command {
         $fs     = new Filesystem();
         $items = new Repository();
 
-        foreach ( $fs->files("/home/raphael/projects/consoleapp/config") as $file )
+        foreach ( $fs->files($this->getConfigDir()) as $file )
         {
             $items->set(
                 Path::getFilenameWithoutExtension($file),
@@ -58,14 +64,11 @@ class ConfigCommand extends Command {
             ->setDescription('Get or set Config value\'s by key.')
             ->addArgument('configkey',
                 InputArgument::REQUIRED,
-                'Config key --get to get value. Or Config key --set to mess around with value\'s.'
+                'Config key. Array dot notation possible.'
             )
-            ->addOption('get')
-            ->addOption(
-                'set',
-                'null',
-                InputOption::VALUE_REQUIRED,
-                'Which key to what value?'
+            ->addArgument('configvalue',
+                InputArgument::OPTIONAL,
+                'Config value. Give key to set new value.'
             );
     }
 
@@ -80,11 +83,10 @@ class ConfigCommand extends Command {
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $key = $input->getArgument('configkey');
-        $optionget = $input->getOption('get');
-        $optionset = $input->getOption('set');
+        $optionset = $input->getArgument('configvalue');
 
 
-        if($key && $optionget){
+        if($key){
             $value = $this->getConfigValue($key);
             $value = $this->printableArray($value);
             $output->writeln('<info>' . $value . '</info>');
@@ -125,7 +127,8 @@ class ConfigCommand extends Command {
         if($results){
             return $results;
         } else {
-            return 'No results';
+            $value = 'test222';
+            return $this->setConfigValue($key, $value);
         }
     }
 
@@ -141,22 +144,19 @@ class ConfigCommand extends Command {
     protected function setConfigValue($key, $value)
     {
         $fs = new Filesystem();
-        $filename = $fs->name($key);
+        $fn = $fs->name($key);
 
-        // Get the right config array.
-        $array = $this->items[$filename];
+        // First string until dot should be the file name.
+        $filename =strstr($fn, '.', true);
 
-        //Make sure we use a valid key and add it to the array.
-        $key = substr(strstr($key, '.'), strlen('.'));
-        if(is_array($array[$key]))
-        {
-            $array[$key][] = $value;
-        } else {
-            $array[$key] = $value;
+        if(strpos($filename, '.') !== false) {
+           $filename = $fn;
         }
 
-        return $fs->put('/home/raphael/projects/consoleapp/config' . DIRECTORY_SEPARATOR
+        $this->items->set($key, $value);
+
+        return $fs->put($this->getConfigDir() . DIRECTORY_SEPARATOR
             . $filename . '.php',
-            '<?php return ' . var_export($array, true). ';');
+            '<?php return ' . var_export($this->items[$fn], true). ';');
     }
 }
