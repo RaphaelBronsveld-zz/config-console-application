@@ -7,7 +7,8 @@
         "illuminate/filesystem": "~5.2",
         "illuminate/container": "~5.2",
         "laravelcollective/html": "5.2.*",
-        "sebwite/support": "~1.0"
+        "sebwite/support": "~1.0",
+        "illuminate/console": "~5.2"
     },
     "license": "MIT",
     "authors": [

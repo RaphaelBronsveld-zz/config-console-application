@@ -1,7 +1,5 @@
 <?php
-
 namespace Raphaelb\Commands;
-
 use Illuminate\Console\Command;
 use Sebwite\Support\Path;
 use Illuminate\Config\Repository;
@@ -10,14 +8,10 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 class ConfigCommand extends Command {
-
     /** @var Repository $items */
     protected $items = [];
-
     protected $dir = __DIR__;
-
     protected $description = 'Get or set config value \'s by given key';
     /**
      * ConfigCommand constructor.
@@ -25,14 +19,11 @@ class ConfigCommand extends Command {
     public function __construct()
     {
         parent::__construct();
-
         $this->loadConfiguration();
     }
-
     public function getConfigDir(){
         return $this->dir . '/../../config';
     }
-
     /**
      * loadConfiguration method
      *
@@ -43,7 +34,6 @@ class ConfigCommand extends Command {
         /** @var \Illuminate\Filesystem\Filesystem $fs */
         $fs     = new Filesystem();
         $items = new Repository();
-
         foreach ( $fs->files($this->getConfigDir()) as $file )
         {
             $items->set(
@@ -53,7 +43,6 @@ class ConfigCommand extends Command {
         }
         $this->items = $items;
     }
-
     /**
      * configure method.
      * Arguments / options added here.
@@ -71,7 +60,6 @@ class ConfigCommand extends Command {
                 'Config value. Give key to set new value.'
             );
     }
-
     /**
      * execute method
      *
@@ -84,20 +72,16 @@ class ConfigCommand extends Command {
     {
         $key = $input->getArgument('configkey');
         $optionset = $input->getArgument('configvalue');
-
-
         if($key){
             $value = $this->getConfigValue($key);
             $value = $this->printableArray($value);
             $output->writeln('<info>' . $value . '</info>');
         }
-
         if($key && $optionset){
             $this->setConfigValue($key, $optionset);
             $output->writeln('New value is set to: ' . $optionset);
         }
     }
-
     /**
      * validateValue method
      * Is the input value an array or just a string?
@@ -113,7 +97,6 @@ class ConfigCommand extends Command {
             return $input;
         }
     }
-
     /**
      * getConfigValue method to return value by given key.
      *
@@ -123,7 +106,6 @@ class ConfigCommand extends Command {
      */
     protected function getConfigValue($key) {
         $results = $this->items->get($key);
-
         if($results){
             return $results;
         } else {
@@ -131,7 +113,6 @@ class ConfigCommand extends Command {
             return $this->setConfigValue($key, $value);
         }
     }
-
     /**
      * set new Config value by given key and value.
      * And save the file.
@@ -145,16 +126,12 @@ class ConfigCommand extends Command {
     {
         $fs = new Filesystem();
         $fn = $fs->name($key);
-
         // First string until dot should be the file name.
         $filename =strstr($fn, '.', true);
-
         if(strpos($filename, '.') !== false) {
-           $filename = $fn;
+            $filename = $fn;
         }
-
         $this->items->set($key, $value);
-
         return $fs->put($this->getConfigDir() . DIRECTORY_SEPARATOR
             . $filename . '.php',
             '<?php return ' . var_export($this->items[$fn], true). ';');

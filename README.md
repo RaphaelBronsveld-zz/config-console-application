@@ -7,18 +7,17 @@ Console Configuration Application
 
 #### Examples
 ```
-php raaftisan config test.database --get 
-// Returns value for given key at file test.php in config dir.
+php raaftisan config test 
+// Will return array at test.php
 
-php raaftisan config app.database --set 'mysql2'
+php raaftisan config test.1
+// Will return 'secret'
+
+php raaftisan config test.database mysql3
 // Sets new value by given key at file app.php in config dir.
 
 php raaftisan config 'filename'.'key' --set 'value'
 ```
-### Demo
-File 'raaftisan' at root folder has the whole project archived into .phar file. Play around with it using php raaftisan.
-
-File 'raaftisan' at bin folder is where the magic happens.
 
 ### Copyright/License
 Copyright 2016 [Raphael Bronsveld](https://github.com/RaphaelBronsveld) - [MIT Licensed](http://RaphaelBronsveld.mit-license.org) 
